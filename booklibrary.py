@@ -12,8 +12,9 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     dlgConn = DialogConnect()
-    dlgConn.show()
+    if dlgConn.exec_():
+        dbname = dlgConn.dbname
+        mainWindow = MainWindow(dbname)
+        mainWindow.show()
 
-    #mainWindow = MainWindow()
-    #mainWindow.show()
     sys.exit(app.exec_())
