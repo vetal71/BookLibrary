@@ -72,7 +72,8 @@ class DialogConnect(QDialog):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-    def getDatabaseList(self):
+    @staticmethod
+    def getDatabaseList():
         config = ConfigParams()
         items = config.getItems("Database")
         dblist = []

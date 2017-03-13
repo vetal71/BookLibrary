@@ -3,7 +3,7 @@
 """
 
 from PySide.QtGui import (QMainWindow, QLabel, QIcon, QAction, QTabWidget, QWidget)
-
+from mainview import MainView
 
 class MainWindow(QMainWindow):
     # конструктор класса
@@ -38,14 +38,14 @@ class MainWindow(QMainWindow):
         self.pgcMain = QTabWidget(self)
         self.setCentralWidget(self.pgcMain)
         # добавляем страницы
-        self.pgcMain.addTab(QWidget(), "Библиотека книг")
+        tsView = MainView()
+        self.pgcMain.addTab(tsView, "Библиотека книг")
         self.pgcMain.addTab(QWidget(), "Мониторинг")
         self.pgcMain.setCurrentIndex(0)
 
         self.setWindowTitle("Библиотека книг")
         self.setWindowIcon(QIcon("BookManager.ico"))
         self.showMaximized()
-
 
     def get_dbname(self):
         return self.__dbname
