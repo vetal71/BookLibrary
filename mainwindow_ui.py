@@ -1,76 +1,7 @@
-from PySide import QtCore, QtGui
-
-# конструктор класса
-    # def __init__(self, dbname="", parent=None):
-    #     # вызов родительского конструктора
-    #     super(MainWindow, self).__init__(parent)
-    #
-    #     self.__dbname = dbname
-    #
-    #     # главное меню
-    #     self.__mnuFile = self.сreateMenuItem("&Файл")
-    #     self.__actRefreshLib = self.createAction("&Обновление библиотеки", self.__mnuFile,
-    #                                              self.refreshLibrary, "synclib.png")
-    #     self.__mnuFile.addSeparator()
-    #     self.__actExit = self.createAction("В&ыход", self.__mnuFile, self.close, "exit.png")
-    #
-    #     # панель инструментов
-    #     self.__tbrMain = self.сreateToolbar("")
-    #     self.__tbrMain.addAction(self.__actRefreshLib)
-    #     self.__tbrMain.addSeparator()
-    #     self.__tbrMain.addAction(self.__actExit)
-    #
-    #     # статус строка
-    #     self.__sbMain = self.statusBar()
-    #     self.__lblHintPain = QLabel()
-    #     self.__lblHintPain.setMinimumWidth(400)
-    #     self.__sbMain.addWidget(self.__lblHintPain)
-    #     self.__lblDBStatusPane = QLabel("База данных: " + self.__dbname)
-    #     self.__lblDBStatusPane.setMinimumWidth(300)
-    #     self.statusBar().addWidget(self.__lblDBStatusPane)
-    #
-    #     self.pgcMain = QTabWidget(self)
-    #     self.setCentralWidget(self.pgcMain)
-    #     # добавляем страницы
-    #     tsView = Ui_Form()
-    #         #MainView()
-    #     self.pgcMain.addTab(tsView, "Библиотека книг")
-    #     self.pgcMain.addTab(QWidget(), "Мониторинг")
-    #     self.pgcMain.setCurrentIndex(0)
-    #
-    #     self.setWindowTitle("Библиотека книг")
-    #     self.setWindowIcon(QIcon("BookManager.ico"))
-    #     self.showMaximized()
-    #
-    # def get_dbname(self):
-    #     return self.__dbname
-    #
-    # def set_dbname(self, dbname):
-    #     self.__dbname = dbname
-    #
-    # def сreateMenuItem(self, caption):
-    #     # построение главного меню
-    #     return self.menuBar().addMenu(caption)
-    #
-    # def сreateToolbar(self, caption):
-    #     return self.addToolBar(caption)
-    #
-    # def createAction(self, text, menu, slot, icon=None):
-    #     """
-    #         хелпер для добавления подменю
-    #     """
-    #     if icon != None:
-    #         action = QAction(QIcon(icon), text, self)
-    #     else:
-    #         action = QAction(text, self)
-    #     menu.addAction(action)
-    #     action.triggered.connect(slot)
-    #     return action
-    #
-    # def refreshLibrary(self):
-    #     print("Обновление библиотеки...")
+from PySide import QtCore, QtGui, QtSql
 
 
+# описание графического интерфейса Главного окна
 class Ui_MainWindow(object):
 
     def __init__(self, dbname=""):
@@ -80,6 +11,7 @@ class Ui_MainWindow(object):
         # главное окно
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1019, 702)
+
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout = QtGui.QHBoxLayout(self.centralwidget)
@@ -134,15 +66,19 @@ class Ui_MainWindow(object):
 
         # иконки для кнопок
         iconAdd = QtGui.QIcon()
-        iconAdd.addPixmap(QtGui.QPixmap("add.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconAdd.addPixmap(QtGui.QPixmap(r"image\add.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iconEdit = QtGui.QIcon()
-        iconEdit.addPixmap(QtGui.QPixmap("edit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconEdit.addPixmap(QtGui.QPixmap(r"image\edit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iconDel = QtGui.QIcon()
-        iconDel.addPixmap(QtGui.QPixmap("del.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconDel.addPixmap(QtGui.QPixmap(r"image\del.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iconRefresh = QtGui.QIcon()
-        iconRefresh.addPixmap(QtGui.QPixmap("refresh.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconRefresh.addPixmap(QtGui.QPixmap(r"image\refresh.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         iconRun = QtGui.QIcon()
-        iconRun.addPixmap(QtGui.QPixmap("run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconRun.addPixmap(QtGui.QPixmap(r"image\run.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconSync = QtGui.QIcon()
+        iconSync.addPixmap(QtGui.QPixmap(r"image\synclib.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        iconExit = QtGui.QIcon()
+        iconExit.addPixmap(QtGui.QPixmap(r"image\exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
 
         # панель инструментов Категории
         self.btnAddCategory = QtGui.QPushButton(self.leftPanel)
@@ -170,7 +106,6 @@ class Ui_MainWindow(object):
         self.btnRefreshCategory.setObjectName("btnRefreshCategory")
         self.hlCategoryToolbar.addWidget(self.btnRefreshCategory)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-
         self.hlCategoryToolbar.addItem(spacerItem)
         self.vlLeftPanel.addLayout(self.hlCategoryToolbar)
         self.treeWidget = QtGui.QTreeWidget(self.leftPanel)
@@ -185,6 +120,8 @@ class Ui_MainWindow(object):
         self.vlLeftPanel.addWidget(self.treeWidget)
         self.glLeftPanel.addLayout(self.vlLeftPanel, 0, 0, 1, 1)
         self.hlPanelView.addWidget(self.leftPanel)
+
+        # правая панель
         self.rightPanel = QtGui.QFrame(self.pnlView)
         self.rightPanel.setFrameShape(QtGui.QFrame.Panel)
         self.rightPanel.setFrameShadow(QtGui.QFrame.Raised)
@@ -222,7 +159,6 @@ class Ui_MainWindow(object):
         self.hlBookToolbar.addWidget(self.btnRefreshBook)
         self.btnView = QtGui.QPushButton(self.rightPanel)
         self.btnView.setText("")
-
         self.btnView.setIcon(iconRun)
         self.btnView.setFlat(True)
         self.btnView.setObjectName("btnView")
@@ -230,21 +166,32 @@ class Ui_MainWindow(object):
         spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.hlBookToolbar.addItem(spacerItem1)
         self.vlRightPanel.addLayout(self.hlBookToolbar)
-        self.tableWidget = QtGui.QTableWidget(self.rightPanel)
-        self.tableWidget.setObjectName("tableWidget")
-        self.tableWidget.setColumnCount(3)
-        self.tableWidget.setRowCount(0)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, item)
-        item = QtGui.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, item)
-        self.tableWidget.horizontalHeader().setCascadingSectionResizes(True)
-        self.tableWidget.horizontalHeader().setSortIndicatorShown(True)
+
+        # панель поиска
+        self.frameFind = QtGui.QFrame(self.rightPanel)
+        self.frameFind.setObjectName("frameFind")
+        self.frameFind.setMinimumSize(0, 20)
+        self.frameFind.setFrameShape(QtGui.QFrame.NoFrame)
+        self.hlFrameFind = QtGui.QHBoxLayout(self.frameFind)
+        self.hlFrameFind.setObjectName("hlFrameFind")
+        self.edtFindString = QtGui.QLineEdit(self.frameFind)
+        self.edtFindString.setObjectName("edtFindString")
+        self.hlFrameFind.addWidget(self.edtFindString)
+        self.btnFind = QtGui.QPushButton(self.frameFind)
+        self.btnFind.setObjectName("btnFind")
+        self.hlFrameFind.addWidget(self.btnFind)
+        self.btnClear = QtGui.QPushButton(self.frameFind)
+        self.btnClear.setObjectName("btnClear")
+        self.hlFrameFind.addWidget(self.btnClear)
+        self.vlRightPanel.addWidget(self.frameFind)
+
+        # TableWidget
+        self.tableWidget = QtGui.QTableView(self.rightPanel)
         self.tableWidget.horizontalHeader().setStretchLastSection(True)
-        self.tableWidget.verticalHeader().setSortIndicatorShown(False)
+        self.tableWidget.horizontalHeader().setSortIndicatorShown(True)
+        self.tableWidget.setObjectName("tableWidget")
         self.vlRightPanel.addWidget(self.tableWidget)
+
         self.gridLayout_3.addLayout(self.vlRightPanel, 0, 0, 1, 1)
         self.hlPanelView.addWidget(self.rightPanel)
         self.gridLayout.addWidget(self.pnlView, 0, 0, 1, 1)
@@ -261,6 +208,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.plainTextEdit, 0, 0, 1, 1)
         self.tabMain.addTab(self.tabSQLMon, "")
         self.horizontalLayout.addWidget(self.tabMain)
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.mainMenu = QtGui.QMenuBar(MainWindow)
         self.mainMenu.setGeometry(QtCore.QRect(0, 0, 1019, 21))
@@ -271,26 +219,23 @@ class Ui_MainWindow(object):
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
 
-        self.lblDBInfo = QtGui.QLabel("Всего книг в библиотеке: {0}".format("100"))
+        self.lblDBInfo = QtGui.QLabel("Всего книг в библиотеке: {0}".format("?"))
         self.lblDBInfo.setMinimumWidth(350)
-        self.statusbar.addWidget(self.lblDBInfo)
+        self.statusbar.addPermanentWidget(self.lblDBInfo)
         self.lblDBName = QtGui.QLabel("База данных: {0}".format(self.__dbname))
         self.lblDBInfo.setMinimumWidth(250)
-        self.statusbar.addWidget(self.lblDBName)
-
+        self.statusbar.addPermanentWidget(self.lblDBName)
         MainWindow.setStatusBar(self.statusbar)
+
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName("toolBar")
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actRefreshLib = QtGui.QAction(MainWindow)
-        icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("synclib.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actRefreshLib.setIcon(icon5)
+
+        self.actRefreshLib.setIcon(iconSync)
         self.actRefreshLib.setObjectName("actRefreshLib")
         self.actExit = QtGui.QAction(MainWindow)
-        icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actExit.setIcon(icon6)
+        self.actExit.setIcon(iconExit)
         self.actExit.setObjectName("actExit")
         self.mnuFile.addAction(self.actRefreshLib)
         self.mnuFile.addSeparator()
@@ -310,16 +255,74 @@ class Ui_MainWindow(object):
 
         # сигналы панели инструментов Категории
         QtCore.QObject.connect(self.btnAddCategory, QtCore.SIGNAL("clicked()"), self.addCategory)
+        QtCore.QObject.connect(self.btnEditCategory, QtCore.SIGNAL("clicked()"), self.editCategory)
+        QtCore.QObject.connect(self.btnDelCategory, QtCore.SIGNAL("clicked()"), self.delCategory)
+        QtCore.QObject.connect(self.btnRefreshCategory, QtCore.SIGNAL("clicked()"), self.refreshCategory)
 
+        # сигналы панели инструментов Книги
+        QtCore.QObject.connect(self.btnAddBook, QtCore.SIGNAL("clicked()"), self.addBook)
+        QtCore.QObject.connect(self.btnEditBook, QtCore.SIGNAL("clicked()"), self.editBook)
+        QtCore.QObject.connect(self.btnDelBook, QtCore.SIGNAL("clicked()"), self.delBook)
+        QtCore.QObject.connect(self.btnRefreshBook, QtCore.SIGNAL("clicked()"), self.refreshBook)
+        QtCore.QObject.connect(self.btnView, QtCore.SIGNAL("clicked()"), self.viewBook)
+
+        # поиск
+        QtCore.QObject.connect(self.btnFind, QtCore.SIGNAL("clicked()"), self.findBook)
+        QtCore.QObject.connect(self.btnClear, QtCore.SIGNAL("clicked()"), self.clearFindText)
 
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+    """ ОБРАБОТЧИКИ """
+
+    """ Обновление библиотеки """
     def refreshLibrary(self):
         print("Синхронизация файла базы данных {0}".format(self.__dbname))
 
+    """ Обработчики событий нажатий кнопок панели инструментов Категории """
     def addCategory(self):
         """ Добавление категории """
-        print("Новая категория ...")
+        pass
+
+    def editCategory(self):
+        """ Редактирование категории """
+        pass
+
+    def delCategory(self):
+        """ Удаление категории """
+        pass
+
+    def refreshCategory(self):
+        """ Обновление списка категорий """
+        pass
+
+    """ Обработчики событий нажатий кнопок панели инструментов Книги """
+    def addBook(self):
+        """ Добавление книг """
+        pass
+
+    def editBook(self):
+        """ Редактирование книг """
+        pass
+
+    def delBook(self):
+        """ Удаление книг """
+        pass
+
+    def refreshBook(self):
+        """ Обновление списка книг """
+        pass
+
+    def viewBook(self):
+        """ Просмотр книги """
+        pass
+
+    def findBook(self):
+        """ Поиск книги """
+        pass
+
+    def clearFindText(self):
+        self.edtFindString.clear()
+        self.edtFindString.setFocus()
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
@@ -331,10 +334,10 @@ class Ui_MainWindow(object):
         self.treeWidget.topLevelItem(0).setText(0, QtGui.QApplication.translate("MainWindow", "1", None, QtGui.QApplication.UnicodeUTF8))
         self.treeWidget.topLevelItem(0).setText(1, QtGui.QApplication.translate("MainWindow", "Все книги", None, QtGui.QApplication.UnicodeUTF8))
         self.treeWidget.setSortingEnabled(__sortingEnabled)
-        self.tableWidget.setSortingEnabled(True)
-        self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "Код", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Наименование", None, QtGui.QApplication.UnicodeUTF8))
-        self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("MainWindow", "Путь к файлу", None, QtGui.QApplication.UnicodeUTF8))
+        # self.tableWidget.setSortingEnabled(True)
+        # self.tableWidget.horizontalHeaderItem(0).setText(QtGui.QApplication.translate("MainWindow", "Код", None, QtGui.QApplication.UnicodeUTF8))
+        # self.tableWidget.horizontalHeaderItem(1).setText(QtGui.QApplication.translate("MainWindow", "Наименование", None, QtGui.QApplication.UnicodeUTF8))
+        # self.tableWidget.horizontalHeaderItem(2).setText(QtGui.QApplication.translate("MainWindow", "Путь к файлу", None, QtGui.QApplication.UnicodeUTF8))
         self.tabMain.setTabText(self.tabMain.indexOf(self.tabLibrary), QtGui.QApplication.translate("MainWindow", "Библиотека", None, QtGui.QApplication.UnicodeUTF8))
         self.tabMain.setTabText(self.tabMain.indexOf(self.tabSQLMon), QtGui.QApplication.translate("MainWindow", "SQL мониторинг", None, QtGui.QApplication.UnicodeUTF8))
         self.mnuFile.setTitle(QtGui.QApplication.translate("MainWindow", "&Файл", None, QtGui.QApplication.UnicodeUTF8))
@@ -357,5 +360,10 @@ class Ui_MainWindow(object):
         self.btnRefreshBook.setStatusTip(QtGui.QApplication.translate("MainWindow", "Обновление списка книг", None, QtGui.QApplication.UnicodeUTF8))
         self.btnView.setStatusTip(QtGui.QApplication.translate("MainWindow", "Просмотр книги", None, QtGui.QApplication.UnicodeUTF8))
         self.btnView.setShortcut(QtGui.QApplication.translate("MainWindow", "F5", None, QtGui.QApplication.UnicodeUTF8))
+
+        self.btnFind.setText(QtGui.QApplication.translate("MainWindow", "Найти", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnFind.setStatusTip(QtGui.QApplication.translate("MainWindow", "Поиск книг", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnClear.setText(QtGui.QApplication.translate("MainWindow", "Очистить", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnClear.setStatusTip(QtGui.QApplication.translate("MainWindow", "Очистить поле для поиска", None, QtGui.QApplication.UnicodeUTF8))
 
 

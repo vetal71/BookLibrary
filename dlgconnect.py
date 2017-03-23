@@ -60,6 +60,7 @@ class DialogConnect(QDialog):
         # запрет изменения размера
         self.setFixedSize(self.size())
         self.center()
+        self.setWindowIcon(QIcon(r"image\BookManager.ico"))
 
         # обработчики событий
         btnDialogs.accepted.connect(self.accept)
