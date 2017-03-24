@@ -1,15 +1,15 @@
 """
 Диалог выбора базы данных для подключения
 """
-from PySide.QtGui import (QDialog, QDialogButtonBox, QDesktopWidget, QIcon, QLabel, QPushButton,
-                          QComboBox, QGridLayout, QVBoxLayout, QFont, QSizePolicy)
-from PySide.QtCore import *
+from PyQt5.QtWidgets import (QDialog, QDialogButtonBox, QDesktopWidget, QLabel, QPushButton,
+                             QComboBox, QGridLayout, QVBoxLayout, QSizePolicy)
+from PyQt5.QtGui import (QIcon, QFont)
+from PyQt5.QtCore import *
 from config import ConfigParams
 from funcs import *
 
 
 class DialogConnect(QDialog):
-
     def __init__(self, parent=None):
         super(DialogConnect, self).__init__(parent)
         # создаем интерфейс

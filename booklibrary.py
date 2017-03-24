@@ -3,7 +3,7 @@
 Назначение: Библиотека книг
 """
 from funcs import *
-from PySide.QtGui import (QApplication)
+from PyQt5.QtWidgets import QApplication
 from dlgconnect import DialogConnect
 from mainwindow import MainForm
 from connection_module import *

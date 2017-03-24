@@ -1,8 +1,8 @@
 """ Модуль для соединения с базой данных """
 
 import os
-from PySide.QtCore import *
-from PySide.QtSql import *
+from PyQt5.QtCore import *
+from PyQt5.QtSql import *
 
 DATABASE_DRIVER = "QSQLITE"
 DATABASE_HOSTNAME = "BookManager"
@@ -74,4 +74,7 @@ class Database(object):
 
     def closeDataBase(self):
         self._db.close()
+
+    def execSQL(self, text=""):
+        return self._db.exec_(text)
 
